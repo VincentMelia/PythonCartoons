@@ -126,5 +126,5 @@ def add_anime():
 
 
 if __name__ == '__main__':
-    #load_database()
+    ##load_database()
     app.run(debug=True)
