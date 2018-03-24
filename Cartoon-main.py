@@ -11,7 +11,7 @@ app.secret_key = os.getenv('cartoon_secret_key')
 
 def save_database():
     Database_file = open(ShowDatabase, 'wb')
-    pickle.dump(Playerdict, Database_file)
+    pickle.dump(Cartoondict, Database_file)
     Database_file.close()
 
     Database_file = open(ShowDatabase, 'rb')
@@ -31,7 +31,7 @@ def save_database():
 # Load the Player lst database
 def load_database():
     try:
-        global Playerdict
+        global Cartoondict
 
         conn = psycopg2.connect(os.getenv('cartoon_database_url'))
 
@@ -39,8 +39,8 @@ def load_database():
         cursor.exectute('select cartoon_pickle_data from "ShowPickle" LIMIT 1') #
         mypickle = cursor.fetchone()[0]
 
-        Playerdict = pickle.loads(mypickle)
-        return Playerdict
+        Cartoondict = pickle.loads(mypickle)
+        return Cartoondict
     except:
         pass # do nothing. no database to load
 
