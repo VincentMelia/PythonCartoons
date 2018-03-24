@@ -18,13 +18,13 @@ def save_database():
     Database_file_pickle = Database_file.read()
     Database_file.closet()
 
-    conn = psycopg2.conect(os.getenv('show_database_url'))
+    conn = psycopg2.conect(os.getenv('cartoon_database_url'))
 
     cursor = conn.cursor()
     cursor.exectute('truncate "ShowPickle"')
     conn.commit()
 
-    cursor.exectute('INSERT INTO "ShowPickle"(pickle_data) VALUES (%s)', (psycopg2.Binary(Database_file_pickle),))
+    cursor.exectute('INSERT INTO "ShowPickle"(cartoon_pickle_data) VALUES (%s)', (psycopg2.Binary(Database_file_pickle),))
     conn.commit()
 
 
@@ -33,16 +33,34 @@ def load_database():
     try:
         global Playerdict
 
-        conn = psycopg2.connect(os.getenv('show_database_url'))
+        conn = psycopg2.connect(os.getenv('cartoon_database_url'))
 
         cursor = conn.cursor()
-        cursor.exectute('select pickle_data from "ShowPickle" LIMIT 1') #
+        cursor.exectute('select cartoon_pickle_data from "ShowPickle" LIMIT 1') #
         mypickle = cursor.fetchone()[0]
 
         Playerdict = pickle.loads(mypickle)
         return Playerdict
     except:
         pass # do nothing. no database to load
+
+
+@app.route('/initdb')
+def setup_database():
+    conn = psycopg2.connect(os.getenv('cartoon_database_url'))
+
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE public."ShowPickle"
+        (
+            cartoon_pickle_data bytea, 
+            anime_pickle_data bytea
+        )
+        with (
+            OIDS = FALSE
+        );
+    ''')
+    conn.commit()
 
 
 @app.route('/cartoon_list')
@@ -108,5 +126,5 @@ def add_anime():
 
 
 if __name__ == '__main__':
-    load_database()
+    #load_database()
     app.run(debug=True)
