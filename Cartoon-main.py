@@ -110,7 +110,7 @@ def update_anime():
 
 @app.route('/')
 def home():
-    with open('home.html') as home:
+    with open('Home.html') as home:
         list_page = home.read()
         return list_page
 
