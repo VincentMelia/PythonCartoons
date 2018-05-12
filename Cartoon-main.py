@@ -114,8 +114,8 @@ def update_anime():
 
 @app.route('/')
 def home():
-    THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
-    home_page = os.path.join(THIS_FOLDER, 'Home.html')
+    this_folder = os.path.dirname(os.path.abspath(__file__))
+    home_page = os.path.join(this_folder, 'Home.html')
     with open(home_page) as home:
         list_page = open(home_page).read()
         return list_page
