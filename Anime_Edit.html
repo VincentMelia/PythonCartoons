@@ -27,10 +27,14 @@
     <input type="text" class="w3-bar-item w3-input" placeholder="Search">
     <a href="#" class="w3-bar-item w3-button w3-black">Go</a>
 </div>
-    <form>
+   <form action = "/anime/new" method = "POST" class = "form" enctype="multipart/form-data" role="form">
         <table>
             <tr><td><label>Anime Title</label></td>
                 <td><input node="con:Anime_Title_Attribute" name="Anime_Title_Input" type="text"></td>
+            </tr>
+             <tr>
+                <td><label>Link</label></td>
+                <td><input node="con:Anime_Link_Attribute" name="Anime_Link_Input" type="text"></td>
             </tr>
             <tr><td><input node="con:Image_Attribute"  name="Image_Input" type="file"></td></tr>
             <tr><td><button type="submit"> Save </button></td>

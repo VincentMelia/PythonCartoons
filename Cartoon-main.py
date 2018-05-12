@@ -4,7 +4,7 @@ import uuid
 import psycopg2
 from Configuration import ShowDatabase
 from flask import Flask, request, redirect, send_from_directory, Response, render_template
-from Show_Objects import cartoon_show_object
+from Show_Objects import cartoon_show_object, anime_show_object
 
 app = Flask(__name__)
 app.secret_key = os.getenv('cartoon_secret_key')
@@ -19,15 +19,15 @@ def save_database():
 
     Database_file = open(ShowDatabase, 'rb')
     Database_file_pickle = Database_file.read()
-    Database_file.closet()
+    Database_file.close()
 
-    conn = psycopg2.conect(os.getenv('cartoon_database_url'))
+    conn = psycopg2.connect(os.getenv('cartoon_database_url'))
 
     cursor = conn.cursor()
-    cursor.exectute('truncate "ShowPickle"')
+    cursor.execute('truncate "ShowPickle"')
     conn.commit()
 
-    cursor.exectute('INSERT INTO "ShowPickle"(cartoon_pickle_data) VALUES (%s)',
+    cursor.execute('INSERT INTO "ShowPickle"(cartoon_pickle_data) VALUES (%s)',
                     (psycopg2.Binary(Database_file_pickle),))
     conn.commit()
 
@@ -40,7 +40,7 @@ def load_database():
         conn = psycopg2.connect(os.getenv('cartoon_database_url'))
 
         cursor = conn.cursor()
-        cursor.exectute('select cartoon_pickle_data from "ShowPickle" LIMIT 1')  #
+        cursor.execute('select cartoon_pickle_data from "ShowPickle" LIMIT 1')  #
         mypickle = cursor.fetchone()[0]
 
         Cartoondict = pickle.loads(mypickle)
@@ -125,9 +125,9 @@ def home():
 def add_cartooon():
     # instantiate a new show object and populate it from request.form
     New_Cartoon = cartoon_show_object(
-        cartoon_show_object(showname=request.form['Title_Input']),
+        cartoon_show_object(showname=request.form['Cartoon_Title_Input']),
         cartoon_show_object(showimage=request.form['Image_Input']),
-        cartoon_show_object(showlink=request.form['link_Input'])
+        cartoon_show_object(showlink=request.form['Cartoon_Link_Input'])
     )
 
     Cartoondict[New_Cartoon.id] = New_Cartoon
@@ -135,9 +135,32 @@ def add_cartooon():
     return redirect('/')
 
 
-@app.route('/anime/new')
+@app.route('/cartoon/new', methods=['GET',])
+def get_add_cartooon_form():
+    this_folder = os.path.dirname(os.path.abspath(__file__))
+    add_cartoon_page = os.path.join(this_folder, 'Cartoon_Edit.html')
+    return open(add_cartoon_page).read()
+
+
+@app.route('/anime/new', methods=['POST',])
 def add_anime():
-    pass
+    # instantiate a new show object and populate it from request.form
+    New_Anime = anime_show_object(
+        anime_show_object(showname=request.form['Anime_Title_Input']),
+        anime_show_object(showimage=request.form['Image_Input']),
+        anime_show_object(showlink=request.form['Anime_Link_Input'])
+    )
+
+    Cartoondict[New_Anime.id] = New_Anime
+    save_database()
+    return redirect('/')
+
+
+@app.route('/anime/new', methods=['GET',])
+def get_add_anime_form():
+    this_folder = os.path.dirname(os.path.abspath(__file__))
+    add_anime_page = os.path.join(this_folder, 'Anime_Edit.html')
+    return open(add_anime_page).read()
 
 
 if __name__ == '__main__':
