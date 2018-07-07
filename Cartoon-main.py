@@ -5,6 +5,7 @@ import psycopg2
 from Configuration import ShowDatabase
 from flask import Flask, request, redirect, send_from_directory, Response, render_template
 from Show_Objects import cartoon_show_object, anime_show_object
+from htmltemplate import Template
 
 app = Flask(__name__)
 app.secret_key = os.getenv('cartoon_secret_key')
@@ -67,14 +68,34 @@ def setup_database():
     conn.commit()
 
 
-@app.route('/cartoon_list')
+@app.route('/cartoon_list', methods=['GET',])
 def cartoon_list():
-    pass
+    load_database()
+    cartoon_list_page = open('CartoonList.html').read()
+
+    def render_Cartoon_template(node):
+        node.Cartoon_Attribute.repeat(render_cartoonAtr, Cartoondict)
+
+    def render_cartoonAtr(node, cartoonsection):
+        node.Cartoon_Title_Attribute.text=Cartoondict[cartoonsection].showname
+
+    cartoon_list_template = Template(cartoon_list_page)
+    return cartoon_list_template.render(render_Cartoon_template)
 
 
-@app.route('/anime_list')
+@app.route('/anime_list', methods=['GET',])
 def anime_list():
-    pass
+    load_database()
+    anime_list_page = open('AnimeList.html').read()
+
+    def render_anime_template(node):
+        node.Anime_Attribute.repeat(render_animeAtr, Cartoondict)
+
+    def render_animeAtr(node, animesection):
+        node.Anime_Title_Attribute.text=Cartoondict[animesection].showname
+
+    anime_list_template = Template(anime_list_page)
+    return anime_list_template.render(render_anime_template)
 
 
 @app.route('/<path:path>')
@@ -125,9 +146,9 @@ def home():
 def add_cartooon():
     # instantiate a new show object and populate it from request.form
     New_Cartoon = cartoon_show_object(
-        cartoon_show_object(showname=request.form['Cartoon_Title_Input']),
-        cartoon_show_object(showimage=request.form['Image_Input']),
-        cartoon_show_object(showlink=request.form['Cartoon_Link_Input'])
+        showname=request.form['Cartoon_Title_Input'],
+        showimage=request.form['Image_Input'],
+        showlink=request.form['Cartoon_Link_Input']
     )
 
     Cartoondict[New_Cartoon.id] = New_Cartoon
@@ -146,9 +167,9 @@ def get_add_cartooon_form():
 def add_anime():
     # instantiate a new show object and populate it from request.form
     New_Anime = anime_show_object(
-        anime_show_object(showname=request.form['Anime_Title_Input']),
-        anime_show_object(showimage=request.form['Image_Input']),
-        anime_show_object(showlink=request.form['Anime_Link_Input'])
+        showname=request.form['Anime_Title_Input'],
+        showimage=request.form['Image_Input'],
+        showlink=request.form['Anime_Link_Input']
     )
 
     Cartoondict[New_Anime.id] = New_Anime
