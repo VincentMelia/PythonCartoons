@@ -78,8 +78,8 @@ def cartoon_list():
         node.Cartoon_Attribute.repeat(render_cartoonAtr, Cartoondict)
 
     def render_cartoonAtr(node, cartoonsection):
-        node.Cartoon_Title_Attribute.text=Cartoondict[cartoonsection].showname
-        node.Cartoon_Link_Attribute.text = Cartoondict[cartoonsection].showlink
+        node.Cartoon_Title_Attribute.text = Cartoondict[cartoonsection].showname
+        node.Cartoon_Link_Attribute.atts['href'] = Cartoondict[cartoonsection].showlink
 
     cartoon_list_template = Template(cartoon_list_page)
     return cartoon_list_template.render(render_Cartoon_template)
