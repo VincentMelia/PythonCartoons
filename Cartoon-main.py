@@ -79,7 +79,8 @@ def cartoon_list():
 
     def render_cartoonAtr(node, cartoonsection):
         node.Cartoon_Title_Attribute.text = Cartoondict[cartoonsection].showname
-        node.Cartoon_Link_Attribute.atts['href'] = Cartoondict[cartoonsection].showlink
+        node.Cartoon_Title_Attribute.atts['href'] = Cartoondict[cartoonsection].showlink
+        #node.Cartoon_Link_Attribute.atts['href'] = Cartoondict[cartoonsection].showlink
 
     cartoon_list_template = Template(cartoon_list_page)
     return cartoon_list_template.render(render_Cartoon_template)
@@ -94,8 +95,9 @@ def anime_list():
         node.Anime_Attribute.repeat(render_animeAtr, Animedict)
 
     def render_animeAtr(node, animesection):
-        node.Anime_Title_Attribute.text=Animedict[animesection].showname
-        node.Anime_Link_Attribute.text=Animedict[animesection].showlink
+        node.Anime_Title_Attribute.text = Animedict[animesection].showname
+        node.Anime_Title_Attribute.atts['href'] = Animedict[animesection].showlink
+        #node.Anime_Link_Attribute.text = Animedict[animesection].showlink
 
     anime_list_template = Template(anime_list_page)
     return anime_list_template.render(render_anime_template)
