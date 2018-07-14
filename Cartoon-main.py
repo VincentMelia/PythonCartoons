@@ -12,6 +12,7 @@ app.secret_key = os.getenv('cartoon_secret_key')
 
 Cartoondict = {}
 
+Animedict = {}
 
 def save_database():
     Database_file = open(ShowDatabase, 'wb')
@@ -78,6 +79,7 @@ def cartoon_list():
 
     def render_cartoonAtr(node, cartoonsection):
         node.Cartoon_Title_Attribute.text=Cartoondict[cartoonsection].showname
+        node.Cartoon_Link_Attribute.text = Cartoondict[cartoonsection].showlink
 
     cartoon_list_template = Template(cartoon_list_page)
     return cartoon_list_template.render(render_Cartoon_template)
@@ -89,10 +91,11 @@ def anime_list():
     anime_list_page = open('AnimeList.html').read()
 
     def render_anime_template(node):
-        node.Anime_Attribute.repeat(render_animeAtr, Cartoondict)
+        node.Anime_Attribute.repeat(render_animeAtr, Animedict)
 
     def render_animeAtr(node, animesection):
-        node.Anime_Title_Attribute.text=Cartoondict[animesection].showname
+        node.Anime_Title_Attribute.text=Animedict[animesection].showname
+        node.Anime_Link_Attribute.text=Animedict[animesection].showlink
 
     anime_list_template = Template(anime_list_page)
     return anime_list_template.render(render_anime_template)
@@ -172,7 +175,7 @@ def add_anime():
         showlink=request.form['Anime_Link_Input']
     )
 
-    Cartoondict[New_Anime.id] = New_Anime
+    Animedict[New_Anime.id] = New_Anime
     save_database()
     return redirect('/')
 
