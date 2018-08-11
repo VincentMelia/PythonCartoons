@@ -32,6 +32,19 @@ def save_database():
 
     cursor.execute('INSERT INTO "ShowPickle"(cartoon_pickle_data) VALUES (%s)',
                     (psycopg2.Binary(Database_file_pickle),))
+
+    Database_file = open(ShowDatabase, 'wb')
+    pickle.dump(Animedict, Database_file)
+    Database_file.close()
+
+    Database_file = open(ShowDatabase, 'rb')
+    Database_file_pickle = Database_file.read()
+    Database_file.close()
+
+
+    cursor.execute('INSERT INTO "ShowPickle"(anime_pickle_data) VALUES (%s)',
+                    (psycopg2.Binary(Database_file_pickle),))
+
     conn.commit()
 
 
@@ -39,7 +52,7 @@ def save_database():
 def load_database():
     try:
         global Cartoondict
-
+        global Animedict
         conn = psycopg2.connect(os.getenv('cartoon_database_url'))
 
         cursor = conn.cursor()
@@ -47,7 +60,11 @@ def load_database():
         mypickle = cursor.fetchone()[0]
 
         Cartoondict = pickle.loads(mypickle)
-        return Cartoondict
+
+        cursor.execute('select anime_pickle_data from "ShowPickle" LIMIT 1')  #
+        mypickle = cursor.fetchone()[0]
+
+        Animendict = pickle.loads(mypickle)
     except:
         pass  # do nothing. no database to load
 
