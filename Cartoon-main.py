@@ -14,6 +14,7 @@ Cartoondict = {}
 
 Animedict = {}
 
+
 def save_database():
     Database_file = open(ShowDatabase, 'wb')
     pickle.dump(Cartoondict, Database_file)
