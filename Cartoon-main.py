@@ -1,5 +1,6 @@
 import pickle
 import os
+import sys
 import uuid
 import psycopg2
 from Configuration import ShowDatabase
@@ -64,8 +65,9 @@ def load_database():
         cursor.execute('select anime_pickle_data from "ShowPickle" LIMIT 1')  #
         mypickle = cursor.fetchone()[0]
 
-        Animendict = pickle.loads(mypickle)
-    except:
+        Animedict = pickle.loads(mypickle)
+    except TypeError as err:
+        print("Unexpected error:", err)
         pass  # do nothing. no database to load
 
 
