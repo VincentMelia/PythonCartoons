@@ -5,20 +5,23 @@ import uuid
 import psycopg2
 from Configuration import ShowDatabase
 from flask import Flask, request, redirect, send_from_directory, Response, render_template
-from Show_Objects import cartoon_show_object, anime_show_object
+from Show_Objects import cartoon_show_object, anime_show_object, show_object
 from htmltemplate import Template
 
 app = Flask(__name__)
 app.secret_key = os.getenv('cartoon_secret_key')
 
 Cartoondict = {}
-
 Animedict = {}
+
+Parent_Object = show_object()
+Parent_Object.cartoon_dict=Cartoondict
+Parent_Object.anime_dict=Animedict
 
 
 def save_database():
     Database_file = open(ShowDatabase, 'wb')
-    pickle.dump(Cartoondict, Database_file)
+    pickle.dump(Parent_Object, Database_file)
     Database_file.close()
 
     Database_file = open(ShowDatabase, 'rb')
@@ -34,38 +37,21 @@ def save_database():
     cursor.execute('INSERT INTO "ShowPickle"(cartoon_pickle_data) VALUES (%s)',
                     (psycopg2.Binary(Database_file_pickle),))
 
-    Database_file = open(ShowDatabase, 'wb')
-    pickle.dump(Animedict, Database_file)
-    Database_file.close()
-
-    Database_file = open(ShowDatabase, 'rb')
-    Database_file_pickle = Database_file.read()
-    Database_file.close()
-
-
-    cursor.execute('INSERT INTO "ShowPickle"(anime_pickle_data) VALUES (%s)',
-                    (psycopg2.Binary(Database_file_pickle),))
-
     conn.commit()
 
 
 # Load the Player lst database
 def load_database():
     try:
-        global Cartoondict
-        global Animedict
+        global Parent_Object
         conn = psycopg2.connect(os.getenv('cartoon_database_url'))
 
         cursor = conn.cursor()
         cursor.execute('select cartoon_pickle_data from "ShowPickle" LIMIT 1')  #
         mypickle = cursor.fetchone()[0]
 
-        Cartoondict = pickle.loads(mypickle)
+        Parent_Object = pickle.loads(mypickle)
 
-        cursor.execute('select anime_pickle_data from "ShowPickle" LIMIT 1')  #
-        mypickle = cursor.fetchone()[0]
-
-        Animedict = pickle.loads(mypickle)
     except TypeError as err:
         print("Unexpected error:", err)
         pass  # do nothing. no database to load
@@ -98,9 +84,9 @@ def cartoon_list():
         node.Cartoon_Attribute.repeat(render_cartoonAtr, Cartoondict)
 
     def render_cartoonAtr(node, cartoonsection):
-        node.Cartoon_Title_Attribute.text = Cartoondict[cartoonsection].showname
-        node.Cartoon_Title_Attribute.atts['href'] = Cartoondict[cartoonsection].showlink
-        #node.Cartoon_Link_Attribute.atts['href'] = Cartoondict[cartoonsection].showlink
+        node.Cartoon_Title_Attribute.text = Parent_Object.cartoon_dict[cartoonsection].showname
+        node.Cartoon_Title_Attribute.atts['href'] = Parent_Object.cartoon_dict[cartoonsection].showlink
+        #node.Cartoon_Link_Attribute.atts['href'] = Parent_Object.cartoon_dict[cartoonsection].showlink
 
     cartoon_list_template = Template(cartoon_list_page)
     return cartoon_list_template.render(render_Cartoon_template)
@@ -115,9 +101,9 @@ def anime_list():
         node.Anime_Attribute.repeat(render_animeAtr, Animedict)
 
     def render_animeAtr(node, animesection):
-        node.Anime_Title_Attribute.text = Animedict[animesection].showname
-        node.Anime_Title_Attribute.atts['href'] = Animedict[animesection].showlink
-        #node.Anime_Link_Attribute.text = Animedict[animesection].showlink
+        node.Anime_Title_Attribute.text = Parent_Object.anime_dict[animesection].showname
+        node.Anime_Title_Attribute.atts['href'] = Parent_Object.anime_dict[animesection].showlink
+        #node.Anime_Link_Attribute.text = Parent_Object.anime[animesection].showlink
 
     anime_list_template = Template(anime_list_page)
     return anime_list_template.render(render_anime_template)
@@ -176,7 +162,7 @@ def add_cartooon():
         showlink=request.form['Cartoon_Link_Input']
     )
 
-    Cartoondict[New_Cartoon.id] = New_Cartoon
+    Parent_Object.cartoon_dict[New_Cartoon.id] = New_Cartoon
     save_database()
     return redirect('/')
 
@@ -197,7 +183,7 @@ def add_anime():
         showlink=request.form['Anime_Link_Input']
     )
 
-    Animedict[New_Anime.id] = New_Anime
+    Parent_Object.anime_dict[New_Anime.id] = New_Anime
     save_database()
     return redirect('/')
 

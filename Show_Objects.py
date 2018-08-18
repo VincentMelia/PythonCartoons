@@ -15,3 +15,9 @@ class cartoon_show_object:
         self.showname=showname
         self.showimage=showimage
         self.showlink=showlink
+
+
+class show_object:
+    def __init__(self):
+        self.anime_dict = None
+        self.cartoon_dict = None
