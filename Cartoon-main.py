@@ -10,12 +10,9 @@ from htmltemplate import Template
 app = Flask(__name__)
 app.secret_key = os.getenv('cartoon_secret_key')
 
-Cartoondict = {}
-Animedict = {}
-
 Parent_Object = show_object()
-Parent_Object.cartoon_dict=Cartoondict
-Parent_Object.anime_dict=Animedict
+Parent_Object.cartoon_dict = {}
+Parent_Object.anime_dict = {}
 
 
 def save_database():
