@@ -3,7 +3,6 @@ import os
 import sys
 import uuid
 import psycopg2
-from Configuration import ShowDatabase
 from flask import Flask, request, redirect, send_from_directory, Response, render_template
 from Show_Objects import cartoon_show_object, anime_show_object, show_object
 from htmltemplate import Template
@@ -20,14 +19,6 @@ Parent_Object.anime_dict=Animedict
 
 
 def save_database():
-    Database_file = open(ShowDatabase, 'wb')
-    pickle.dump(Parent_Object, Database_file)
-    Database_file.close()
-
-    Database_file = open(ShowDatabase, 'rb')
-    Database_file_pickle = Database_file.read()
-    Database_file.close()
-
     conn = psycopg2.connect(os.getenv('cartoon_database_url'))
 
     cursor = conn.cursor()
@@ -35,7 +26,7 @@ def save_database():
     conn.commit()
 
     cursor.execute('INSERT INTO "ShowPickle"(cartoon_pickle_data) VALUES (%s)',
-                    (psycopg2.Binary(Database_file_pickle),))
+                   (psycopg2.Binary(pickle.dumps(Parent_Object)),))
 
     conn.commit()
 
