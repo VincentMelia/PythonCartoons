@@ -49,9 +49,8 @@ def load_database():
         cursor = conn.cursor()
         cursor.execute('select cartoon_pickle_data from "ShowPickle" LIMIT 1')  #
         mypickle = cursor.fetchone()[0]
-
         Parent_Object = pickle.loads(mypickle)
-
+        global testdd
     except TypeError as err:
         print("Unexpected error:", err)
         pass  # do nothing. no database to load
@@ -81,7 +80,7 @@ def cartoon_list():
     cartoon_list_page = open('CartoonList.html').read()
 
     def render_Cartoon_template(node):
-        node.Cartoon_Attribute.repeat(render_cartoonAtr, Cartoondict)
+        node.Cartoon_Attribute.repeat(render_cartoonAtr, Parent_Object.cartoon_dict)
 
     def render_cartoonAtr(node, cartoonsection):
         node.Cartoon_Title_Attribute.text = Parent_Object.cartoon_dict[cartoonsection].showname
@@ -98,7 +97,7 @@ def anime_list():
     anime_list_page = open('AnimeList.html').read()
 
     def render_anime_template(node):
-        node.Anime_Attribute.repeat(render_animeAtr, Animedict)
+        node.Anime_Attribute.repeat(render_animeAtr, Parent_Object.anime_dict)
 
     def render_animeAtr(node, animesection):
         node.Anime_Title_Attribute.text = Parent_Object.anime_dict[animesection].showname
