@@ -50,7 +50,7 @@ def load_database():
         cursor.execute('select cartoon_pickle_data from "ShowPickle" LIMIT 1')  #
         mypickle = cursor.fetchone()[0]
         Parent_Object = pickle.loads(mypickle)
-        global testdd
+
     except TypeError as err:
         print("Unexpected error:", err)
         pass  # do nothing. no database to load
