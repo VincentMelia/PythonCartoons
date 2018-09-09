@@ -1,12 +1,12 @@
-certifi==2018.4.16
+certifi==2018.8.24
 click==6.7
 Flask==1.0.2
-gunicorn==19.8.1
+gunicorn==19.9.0
 htmltemplate==2.2.0
 itsdangerous==0.24
 Jinja2==2.10
 MarkupSafe==1.0
 olefile==0.45.1
-Pillow==5.1.0
-psycopg2==2.7.4
+Pillow==5.2.0
+psycopg2==2.7.5
 Werkzeug==0.14.1
