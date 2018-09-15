@@ -73,7 +73,7 @@ def cartoon_list():
     def render_cartoonAtr(node, cartoonsection):
         node.Cartoon_Title_Attribute.text = Parent_Object.cartoon_dict[cartoonsection].showname
         node.Cartoon_Title_Attribute.atts['href'] = Parent_Object.cartoon_dict[cartoonsection].showlink
-        #node.Cartoon_Link_Attribute.atts['href'] = Parent_Object.cartoon_dict[cartoonsection].showlink
+        node.Cartoon_Edit_Attribute.atts['href'] = '/cartoon/' + str(Parent_Object.cartoon_dict[cartoonsection].id)
 
     cartoon_list_template = Template(cartoon_list_page)
     return cartoon_list_template.render(render_Cartoon_template)
@@ -90,25 +90,52 @@ def anime_list():
     def render_animeAtr(node, animesection):
         node.Anime_Title_Attribute.text = Parent_Object.anime_dict[animesection].showname
         node.Anime_Title_Attribute.atts['href'] = Parent_Object.anime_dict[animesection].showlink
-        #node.Anime_Link_Attribute.text = Parent_Object.anime[animesection].showlink
+        node.Anime_Title_Attribute.atts['href'] = '/anime/' + str(Parent_Object.anime_dict[animesection].id)
 
     anime_list_template = Template(anime_list_page)
     return anime_list_template.render(render_anime_template)
 
 
-@app.route('/<path:path>')
+@app.route('/<path:path>' )
 def send_js(path):
     return send_from_directory('', path)
 
 
-@app.route('/cartoon/<id>')
-def get_cartoon():
-    pass
+@app.route('/cartoon/<id>', methods=['GET',])
+def get_cartoon(id):
+    global Parent_Object
+    load_database()
+
+    id_as_uuid = uuid.UUID(id)
+    cartoon_object_from_dictionary = Parent_Object.cartoon_dict[id_as_uuid]
+
+    edit_page = open('Cartoon_Edit.html').read()
+
+    def render_cartoon(node, cartoon_object):
+        node.Cartoon_Link_Attribute.atts['value'] = cartoon_object.showlink
+        node.Cartoon_Title_Attribute.atts['value'] = cartoon_object.showname
+
+    cartoon_template = Template(edit_page)
+    return cartoon_template.render(render_cartoon, cartoon_object_from_dictionary)
 
 
-@app.route('/anime/<id>')
-def get_anime():
-    pass
+@app.route('/anime/<id>', methods=['GET',])
+def get_anime(id):
+    global Parent_Object
+    load_database()
+
+    id_as_uuid = uuid.UUID(id)
+    anime_object_from_dictionary = Parent_Object.anime_dict[id_as_uuid]
+
+    edit_page = open('Anime_Edit.html').read()
+
+    def render_anime(node, anime_object):
+        node.Anime_Link_Attribute.atts['value'] = 'http://www.microsoft.com'#anime_object.showlink
+        node.Anime_Title_Attribute.atts['value'] = anime_object.showname
+
+    cartoon_template = Template(edit_page)
+    return cartoon_template.render(render_anime, anime_object_from_dictionary)
+
 
 
 @app.route('/cartoon/<id>/delete')
