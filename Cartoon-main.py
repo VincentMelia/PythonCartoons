@@ -90,7 +90,7 @@ def anime_list():
     def render_animeAtr(node, animesection):
         node.Anime_Title_Attribute.text = Parent_Object.anime_dict[animesection].showname
         node.Anime_Title_Attribute.atts['href'] = Parent_Object.anime_dict[animesection].showlink
-        node.Anime_Title_Attribute.atts['href'] = '/anime/' + str(Parent_Object.anime_dict[animesection].id)
+        node.Anime_Edit_Attribute.atts['href'] = '/anime/' + str(Parent_Object.anime_dict[animesection].id)
 
     anime_list_template = Template(anime_list_page)
     return anime_list_template.render(render_anime_template)
