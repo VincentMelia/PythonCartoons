@@ -3,7 +3,7 @@ import os
 import sys
 import uuid
 import psycopg2
-from flask import Flask, request, redirect, send_from_directory, Response, render_template
+from flask import Flask, request, redirect, send_from_directory, Response, render_template, url_for
 from Show_Objects import cartoon_show_object, anime_show_object, show_object
 from htmltemplate import Template
 
@@ -83,6 +83,7 @@ def cartoon_list():
 def anime_list():
     load_database()
     anime_list_page = open('AnimeList.html').read()
+    #anime_list_page = open(url_for('static', filename='AnimeList.html')).read()
 
     def render_anime_template(node):
         node.Anime_Attribute.repeat(render_animeAtr, Parent_Object.anime_dict)
