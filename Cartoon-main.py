@@ -65,7 +65,7 @@ def setup_database():
 @app.route('/cartoon_list', methods=['GET',])
 def cartoon_list():
     load_database()
-    cartoon_list_page = open('CartoonList.html').read()
+    cartoon_list_page = open(app.root_path + '/CartoonList.html').read()
 
     def render_Cartoon_template(node):
         node.Cartoon_Attribute.repeat(render_cartoonAtr, Parent_Object.cartoon_dict)
@@ -82,7 +82,7 @@ def cartoon_list():
 @app.route('/anime_list', methods=['GET',])
 def anime_list():
     load_database()
-    anime_list_page = open("AnimeList.html").read()
+    anime_list_page = open(app.root_path + "/static/AnimeList.html").read()
     # anime_list_page = open(url_for('static', filename='AnimeList.html')).read()
 
     def render_anime_template(node):
