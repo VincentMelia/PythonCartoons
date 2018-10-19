@@ -28,7 +28,7 @@ def save_database():
     conn.commit()
 
 
-# Load the Player lst database
+# Load the Player list database
 def load_database():
     try:
         global Parent_Object
