@@ -102,3 +102,4 @@ ENV/
 .idea/inspectionProfiles/
 .idea/
 CartoonDatabase.P
+*.png

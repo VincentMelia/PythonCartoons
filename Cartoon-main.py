@@ -6,6 +6,7 @@ import psycopg2
 from flask import Flask, request, redirect, send_from_directory, Response, render_template, url_for
 from Show_Objects import cartoon_show_object, anime_show_object, show_object
 from htmltemplate import Template
+from PIL import Image
 
 app = Flask(__name__)
 app.secret_key = os.getenv('cartoon_secret_key')
@@ -191,12 +192,27 @@ def get_add_cartooon_form():
 
 @app.route('/anime/new', methods=['POST',])
 def add_anime():
-    # instantiate a new show object and populate it from request.form
-    New_Anime = anime_show_object(
-        showname=request.form['Anime_Title_Input'],
-        showimage=request.form['Image_Input'],
-        showlink=request.form['Anime_Link_Input']
-    )
+    try:
+        file = request.files['Image_Input']
+    except:
+        file = None
+
+    if file is not None and file.filename != '':
+        uploaded_image = Image.open(file)
+        uploaded_image.thumbnail((500, 500))
+        uploaded_image.save(file.filename)
+        uploaded_image.close()
+        uploaded_image=open(file.filename,'rb')
+
+        # instantiate a new show object and populate it from request.form
+        New_Anime = anime_show_object(
+            showname=request.form['Anime_Title_Input'],
+            showimage=uploaded_image.read(),
+            showlink=request.form['Anime_Link_Input'])
+    else:
+        New_Anime=anime_show_object(
+            showname=anime_show_object,
+            showlink=anime_show_object)
 
     Parent_Object.anime_dict[New_Anime.id] = New_Anime
     save_database()
