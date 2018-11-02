@@ -101,3 +101,5 @@ ENV/
 .mypy_cache/
 .idea/inspectionProfiles/
 .idea/
+CartoonDatabase.P
+*.png
