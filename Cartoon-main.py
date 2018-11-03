@@ -174,7 +174,7 @@ def update_cartoon():
         cartoon_to_update.showname = request.form['Cartoon_Title_Input']
         cartoon_to_update.showlink = request.form['Cartoon_Link_Input']
 
-    Parent_Object.anime_dict[id] = cartoon_to_update
+    Parent_Object.cartoon_dict[id] = cartoon_to_update
     save_database()
     return redirect('/')
 
