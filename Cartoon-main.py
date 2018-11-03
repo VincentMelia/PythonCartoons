@@ -211,8 +211,8 @@ def add_anime():
             showlink=request.form['Anime_Link_Input'])
     else:
         New_Anime=anime_show_object(
-            showname=anime_show_object,
-            showlink=anime_show_object)
+            showname=request.form['Anime_Title_Input'],
+            showlink=request.form['Anime_Link_Input'])
 
     Parent_Object.anime_dict[New_Anime.id] = New_Anime
     save_database()
