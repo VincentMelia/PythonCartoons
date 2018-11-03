@@ -1,0 +1,29 @@
+{
+  "name": "PythonCartoons",
+  "scripts": {
+  },
+  "env": {
+    "cartoon_database_url": {
+      "required": true
+    },
+    "cartoon_root_url": {
+      "required": true
+    },
+    "cartoon_secret_key": {
+      "required": true
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1
+    }
+  },
+  "addons": [
+    "heroku-postgresql"
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ]
+}
