@@ -33,6 +33,7 @@ def save_database():
 def load_database():
     try:
         global Parent_Object
+
         conn = psycopg2.connect(os.getenv('cartoon_database_url'))
 
         cursor = conn.cursor()
