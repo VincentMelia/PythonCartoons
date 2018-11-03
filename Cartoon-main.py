@@ -153,13 +153,59 @@ def delete_anime():
 
 @app.route('/cartoon/<id>/update')
 def update_cartoon():
-    pass
+
+    cartoon_to_update = Parent_Object.cartoon_dict[id]
+
+    try:
+        file = request.files['Image_Input']
+    except:
+        file = None
+
+    if file is not None and file.filename != '':
+        uploaded_image = Image.open(file)
+        uploaded_image.thumbnail((500, 500))
+        uploaded_image.save(file.filename)
+        uploaded_image.close()
+        uploaded_image = open(file.filename, 'rb')
+
+        cartoon_to_update.showname = request.form['Cartoon_Title_Input']
+        cartoon_to_update.showimage = uploaded_image.read()
+        cartoon_to_update.showlink = request.form['Cartoon_Link_Input']
+    else:
+        cartoon_to_update.showname = request.form['Cartoon_Title_Input']
+        cartoon_to_update.showlink = request.form['Cartoon_Link_Input']
+
+    Parent_Object.anime_dict[id] = cartoon_to_update
+    save_database()
+    return redirect('/')
 
 
 @app.route('/anime/<id>/update')
 def update_anime():
-    pass
+    anime_to_update = Parent_Object.anime_dict[id]
 
+    try:
+        file = request.files['Image_Input']
+    except:
+        file = None
+
+    if file is not None and file.filename != '':
+        uploaded_image = Image.open(file)
+        uploaded_image.thumbnail((500, 500))
+        uploaded_image.save(file.filename)
+        uploaded_image.close()
+        uploaded_image = open(file.filename,'rb')
+
+        anime_to_update.showname = request.form['Anime_Title_Input']
+        anime_to_update.showimage = uploaded_image.read()
+        anime_to_update.showlink=request.form['Anime_Link_Input']
+    else:
+        anime_to_update.showname=request.form['Anime_Title_Input']
+        anime_to_update.showlink=request.form['Anime_Link_Input']
+
+    Parent_Object.anime_dict[id] = anime_to_update
+    save_database()
+    return redirect('/')
 
 @app.route('/')
 def home():
@@ -172,12 +218,27 @@ def home():
 
 @app.route('/cartoon/new', methods=['POST',])
 def add_cartooon():
+    try:
+        file = request.files['Image_Input']
+    except:
+        file = None
+
+    if file is not None and file.filename != '':
+        uploaded_image = Image.open(file)
+        uploaded_image.thumbnail((500, 500))
+        uploaded_image.save(file.filename)
+        uploaded_image.close()
+        uploaded_image=open(file.filename,'rb')
+
     # instantiate a new show object and populate it from request.form
-    New_Cartoon = cartoon_show_object(
-        showname=request.form['Cartoon_Title_Input'],
-        showimage=request.form['Image_Input'],
-        showlink=request.form['Cartoon_Link_Input']
-    )
+        New_Cartoon = cartoon_show_object(
+            showname=request.form['Cartoon_Title_Input'],
+            showimage=uploaded_image.read(),
+            showlink=request.form['Cartoon_Link_Input'])
+    else:
+        New_Cartoon = cartoon_show_object(
+            showname=request.form['Cartoon_Title_Input'],
+            showlink=request.form['Cartoon_Link_Input'])
 
     Parent_Object.cartoon_dict[New_Cartoon.id] = New_Cartoon
     save_database()
