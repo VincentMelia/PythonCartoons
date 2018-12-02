@@ -7,6 +7,7 @@ from flask import Flask, request, redirect, send_from_directory, Response, rende
 from Show_Objects import cartoon_show_object, anime_show_object, show_object
 from htmltemplate import Template
 from PIL import Image
+import base64
 
 app = Flask(__name__)
 app.secret_key = os.getenv('cartoon_secret_key')
@@ -112,11 +113,18 @@ def get_cartoon(id):
     id_as_uuid = uuid.UUID(id)
     cartoon_object_from_dictionary = Parent_Object.cartoon_dict[id_as_uuid]
 
+    if cartoon_object_from_dictionary.showimage is not None:
+        data64 = u'data:%s;base64, %s' % (
+            'image/jpg', base64.encodebytes(cartoon_object_from_dictionary.showimage).decode('utf8'))
+    else:
+        data64 = None
+
     edit_page = open('Cartoon_Edit.html').read()
 
     def render_cartoon(node, cartoon_object):
         node.Cartoon_Link_Attribute.atts['value'] = cartoon_object.showlink
         node.Cartoon_Title_Attribute.atts['value'] = cartoon_object.showname
+        node.DisplayImgAtr.atts['src'] = data64
 
     cartoon_template = Template(edit_page)
     return cartoon_template.render(render_cartoon, cartoon_object_from_dictionary)
@@ -130,11 +138,20 @@ def get_anime(id):
     id_as_uuid = uuid.UUID(id)
     anime_object_from_dictionary = Parent_Object.anime_dict[id_as_uuid]
 
+    if anime_object_from_dictionary.showimage is not None:
+        data64 = u'data:%s;base64, %s' % (
+            'image/jpg', base64.encodebytes(anime_object_from_dictionary.showimage).decode('utf8'))
+
+    else:
+        data64 = None
+
     edit_page = open('Anime_Edit.html').read()
 
     def render_anime(node, anime_object):
-        node.Anime_Link_Attribute.atts['value'] = 'http://www.microsoft.com'#anime_object.showlink
+        node.Anime_Link_Attribute.atts['value'] = anime_object.showlink
         node.Anime_Title_Attribute.atts['value'] = anime_object.showname
+        node.DisplayImgAtr.atts['src'] = data64
+
 
     cartoon_template = Template(edit_page)
     return cartoon_template.render(render_anime, anime_object_from_dictionary)
