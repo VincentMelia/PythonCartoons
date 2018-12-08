@@ -113,7 +113,8 @@ def get_cartoon(id):
     id_as_uuid = uuid.UUID(id)
     cartoon_object_from_dictionary = Parent_Object.cartoon_dict[id_as_uuid]
 
-    if cartoon_object_from_dictionary.showimage is not None:
+    if cartoon_object_from_dictionary.showimage is not None\
+            and cartoon_object_from_dictionary.showimage != '':
         data64 = u'data:%s;base64, %s' % (
             'image/jpg', base64.encodebytes(cartoon_object_from_dictionary.showimage).decode('utf8'))
     else:
@@ -138,7 +139,8 @@ def get_anime(id):
     id_as_uuid = uuid.UUID(id)
     anime_object_from_dictionary = Parent_Object.anime_dict[id_as_uuid]
 
-    if anime_object_from_dictionary.showimage is not None:
+    if anime_object_from_dictionary.showimage is not None\
+            and anime_object_from_dictionary.showimage != '':
         data64 = u'data:%s;base64, %s' % (
             'image/jpg', base64.encodebytes(anime_object_from_dictionary.showimage).decode('utf8'))
 
@@ -264,9 +266,28 @@ def add_cartooon():
 
 @app.route('/cartoon/new', methods=['GET',])
 def get_add_cartooon_form():
+
+    def render_cartoon_page(node):
+        node.ActionPathAtr.atts['action'] = '/cartoon/new/'
+
     this_folder = os.path.dirname(os.path.abspath(__file__))
     add_cartoon_page = os.path.join(this_folder, 'Cartoon_Edit.html')
-    return open(add_cartoon_page).read()
+    cartoon_template = Template(open(add_cartoon_page).read())
+    return cartoon_template.render(render_cartoon_page)
+    #return open(add_cartoon_page).read()
+
+
+@app.route('/anime/new', methods=['GET',])
+def get_add_anime_form():
+
+    def render_anime_page(node):
+        node.ActionPathAtr.atts['action'] = '/anime/new/'
+
+    this_folder = os.path.dirname(os.path.abspath(__file__))
+    add_anime_page = os.path.join(this_folder, 'Anime_Edit.html')
+    anime_template = Template(open(add_anime_page).read())
+    return anime_template.render(render_anime_page)
+    #return open(add_anime_page).read()
 
 
 @app.route('/anime/new', methods=['POST',])
@@ -296,13 +317,6 @@ def add_anime():
     Parent_Object.anime_dict[New_Anime.id] = New_Anime
     save_database()
     return redirect('/')
-
-
-@app.route('/anime/new', methods=['GET',])
-def get_add_anime_form():
-    this_folder = os.path.dirname(os.path.abspath(__file__))
-    add_anime_page = os.path.join(this_folder, 'Anime_Edit.html')
-    return open(add_anime_page).read()
 
 
 if __name__ == '__main__':
