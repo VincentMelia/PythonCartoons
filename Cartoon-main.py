@@ -123,9 +123,9 @@ def get_cartoon(id):
     edit_page = open('Cartoon_Edit.html').read()
 
     def render_cartoon(node, cartoon_object):
-        node.Cartoon_Link_Attribute.atts['value'] = cartoon_object.showlink
-        node.Cartoon_Title_Attribute.atts['value'] = cartoon_object.showname
-        node.DisplayImgAtr.atts['src'] = data64
+        node.ActionPathAtr.Cartoon_Link_Attribute.atts['value'] = cartoon_object.showlink
+        node.ActionPathAtr.Cartoon_Title_Attribute.atts['value'] = cartoon_object.showname
+        node.ActionPathAtr.DisplayImgAtr.atts['src'] = data64
 
     cartoon_template = Template(edit_page)
     return cartoon_template.render(render_cartoon, cartoon_object_from_dictionary)
@@ -150,10 +150,9 @@ def get_anime(id):
     edit_page = open('Anime_Edit.html').read()
 
     def render_anime(node, anime_object):
-        node.Anime_Link_Attribute.atts['value'] = anime_object.showlink
-        node.Anime_Title_Attribute.atts['value'] = anime_object.showname
-        node.DisplayImgAtr.atts['src'] = data64
-
+        node.ActionPathAtr.Anime_Link_Attribute.atts['value'] = anime_object.showlink
+        node.ActionPathAtr.Anime_Title_Attribute.atts['value'] = anime_object.showname
+        node.ActionPathAtr.DisplayImgAtr.atts['src'] = data64
 
     cartoon_template = Template(edit_page)
     return cartoon_template.render(render_anime, anime_object_from_dictionary)
