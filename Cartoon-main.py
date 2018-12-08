@@ -172,6 +172,8 @@ def delete_anime():
 
 @app.route('/cartoon/<id>/update', methods=['POST',])
 def update_cartoon(id):
+    global Parent_Object
+    load_database()
 
     cartoon_to_update = Parent_Object.cartoon_dict[id]
 
@@ -201,6 +203,9 @@ def update_cartoon(id):
 
 @app.route('/anime/<id>/update', methods=['POST',])
 def update_anime(id):
+    global Parent_Object
+    load_database()
+
     anime_to_update = Parent_Object.anime_dict[id]
 
     try:
