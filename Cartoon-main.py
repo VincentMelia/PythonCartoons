@@ -175,7 +175,9 @@ def update_cartoon(id):
     global Parent_Object
     load_database()
 
-    cartoon_to_update = Parent_Object.cartoon_dict[id]
+    id_as_uuid = uuid.UUID(id)
+
+    cartoon_to_update = Parent_Object.cartoon_dict[id_as_uuid]
 
     try:
         file = request.files['Image_Input']
@@ -196,7 +198,7 @@ def update_cartoon(id):
         cartoon_to_update.showname = request.form['Cartoon_Title_Input']
         cartoon_to_update.showlink = request.form['Cartoon_Link_Input']
 
-    Parent_Object.cartoon_dict[id] = cartoon_to_update
+    Parent_Object.cartoon_dict[id_as_uuid] = cartoon_to_update
     save_database()
     return redirect('/')
 
@@ -206,7 +208,9 @@ def update_anime(id):
     global Parent_Object
     load_database()
 
-    anime_to_update = Parent_Object.anime_dict[id]
+    id_as_uuid = uuid.UUID(id)
+
+    anime_to_update = Parent_Object.anime_dict[id_as_uuid]
 
     try:
         file = request.files['Image_Input']
@@ -227,7 +231,7 @@ def update_anime(id):
         anime_to_update.showname=request.form['Anime_Title_Input']
         anime_to_update.showlink=request.form['Anime_Link_Input']
 
-    Parent_Object.anime_dict[id] = anime_to_update
+    Parent_Object.anime_dict[id_as_uuid] = anime_to_update
     save_database()
     return redirect('/')
 
@@ -241,7 +245,7 @@ def home():
         return list_page
 
 
-@app.route('/cartoon/new', methods=['POST',])
+@app.route('/cartoon/new/', methods=['POST',])
 def add_cartooon():
     try:
         file = request.files['Image_Input']
@@ -270,7 +274,7 @@ def add_cartooon():
     return redirect('/')
 
 
-@app.route('/cartoon/new', methods=['GET',])
+@app.route('/cartoon/new/', methods=['GET',])
 def get_add_cartooon_form():
 
     def render_cartoon_page(node):
@@ -283,7 +287,7 @@ def get_add_cartooon_form():
     #return open(add_cartoon_page).read()
 
 
-@app.route('/anime/new', methods=['GET',])
+@app.route('/anime/new/', methods=['GET',])
 def get_add_anime_form():
 
     def render_anime_page(node):
@@ -296,7 +300,7 @@ def get_add_anime_form():
     #return open(add_anime_page).read()
 
 
-@app.route('/anime/new', methods=['POST',])
+@app.route('/anime/new/', methods=['POST',])
 def add_anime():
     try:
         file = request.files['Image_Input']
