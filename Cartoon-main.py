@@ -77,6 +77,7 @@ def cartoon_list():
         node.Cartoon_Title_Attribute.text = Parent_Object.cartoon_dict[cartoonsection].showname
         node.Cartoon_Title_Attribute.atts['href'] = Parent_Object.cartoon_dict[cartoonsection].showlink
         node.Cartoon_Edit_Attribute.atts['href'] = '/cartoon/' + str(Parent_Object.cartoon_dict[cartoonsection].id)
+        node.Cartoon_Delete_Attribute.atts['href'] = '/cartoon/' + str(Parent_Object.cartoon_dict[cartoonsection].id) + '/delete'
 
     cartoon_list_template = Template(cartoon_list_page)
     return cartoon_list_template.render(render_Cartoon_template)
@@ -95,6 +96,7 @@ def anime_list():
         node.Anime_Title_Attribute.text = Parent_Object.anime_dict[animesection].showname
         node.Anime_Title_Attribute.atts['href'] = Parent_Object.anime_dict[animesection].showlink
         node.Anime_Edit_Attribute.atts['href'] = '/anime/' + str(Parent_Object.anime_dict[animesection].id)
+        node.Anime_Delete_Attribute.atts['href'] = '/anime/' +str(Parent_Object.anime_dict[animesection].id) + '/delete'
 
     anime_list_template = Template(anime_list_page)
     return anime_list_template.render(render_anime_template)
@@ -161,13 +163,23 @@ def get_anime(id):
 
 
 @app.route('/cartoon/<id>/delete')
-def delete_cartoon():
-    pass
+def delete_cartoon(id):
+    global Parent_Object
+    load_database()
+    id_as_uuid = uuid.UUID(id)
+    del Parent_Object.cartoon_dict[id_as_uuid]
+    save_database()
+    return redirect('/cartoon_list')
 
 
 @app.route('/anime/<id>/delete')
-def delete_anime():
-    pass
+def delete_anime(id):
+    global Parent_Object
+    load_database()
+    id_as_uuid = uuid.UUID(id)
+    del Parent_Object.anime_dict[id_as_uuid]
+    save_database()
+    return redirect('/anime_list')
 
 
 @app.route('/cartoon/<id>/update', methods=['POST',])
