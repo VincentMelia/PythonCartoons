@@ -77,6 +77,7 @@ def cartoon_list():
         node.Cartoon_Title_Attribute.text = Parent_Object.cartoon_dict[cartoonsection].showname
         node.Cartoon_Title_Attribute.atts['href'] = Parent_Object.cartoon_dict[cartoonsection].showlink
         node.Cartoon_Edit_Attribute.atts['href'] = '/cartoon/' + str(Parent_Object.cartoon_dict[cartoonsection].id)
+        node.Cartoon_Delete_Attribute.atts['href'] = '/cartoon/' + str(Parent_Object.cartoon_dict[cartoonsection].id) + '/delete'
 
     cartoon_list_template = Template(cartoon_list_page)
     return cartoon_list_template.render(render_Cartoon_template)
@@ -85,8 +86,7 @@ def cartoon_list():
 @app.route('/anime_list', methods=['GET',])
 def anime_list():
     load_database()
-    anime_list_page = open(app.root_path + "/static/AnimeList.html").read()
-    # anime_list_page = open(url_for('static', filename='AnimeList.html')).read()
+    anime_list_page = open(app.root_path + "/AnimeList.html").read()
 
     def render_anime_template(node):
         node.Anime_Attribute.repeat(render_animeAtr, Parent_Object.anime_dict)
@@ -95,12 +95,13 @@ def anime_list():
         node.Anime_Title_Attribute.text = Parent_Object.anime_dict[animesection].showname
         node.Anime_Title_Attribute.atts['href'] = Parent_Object.anime_dict[animesection].showlink
         node.Anime_Edit_Attribute.atts['href'] = '/anime/' + str(Parent_Object.anime_dict[animesection].id)
+        node.Anime_Delete_Attribute.atts['href'] = '/anime/' +str(Parent_Object.anime_dict[animesection].id) + '/delete'
 
     anime_list_template = Template(anime_list_page)
     return anime_list_template.render(render_anime_template)
 
 
-@app.route('/<path:path>' )
+@app.route('/<path:path>')
 def send_js(path):
     return send_from_directory('', path)
 
@@ -113,7 +114,8 @@ def get_cartoon(id):
     id_as_uuid = uuid.UUID(id)
     cartoon_object_from_dictionary = Parent_Object.cartoon_dict[id_as_uuid]
 
-    if cartoon_object_from_dictionary.showimage is not None:
+    if cartoon_object_from_dictionary.showimage is not None\
+            and cartoon_object_from_dictionary.showimage != '':
         data64 = u'data:%s;base64, %s' % (
             'image/jpg', base64.encodebytes(cartoon_object_from_dictionary.showimage).decode('utf8'))
     else:
@@ -122,9 +124,10 @@ def get_cartoon(id):
     edit_page = open('Cartoon_Edit.html').read()
 
     def render_cartoon(node, cartoon_object):
-        node.Cartoon_Link_Attribute.atts['value'] = cartoon_object.showlink
-        node.Cartoon_Title_Attribute.atts['value'] = cartoon_object.showname
-        node.DisplayImgAtr.atts['src'] = data64
+        node.ActionPathAtr.atts['action'] = '/cartoon/' + str(id_as_uuid) + '/update'
+        node.ActionPathAtr.Cartoon_Link_Attribute.atts['value'] = cartoon_object.showlink
+        node.ActionPathAtr.Cartoon_Title_Attribute.atts['value'] = cartoon_object.showname
+        node.ActionPathAtr.DisplayImgAtr.atts['src'] = data64
 
     cartoon_template = Template(edit_page)
     return cartoon_template.render(render_cartoon, cartoon_object_from_dictionary)
@@ -138,7 +141,8 @@ def get_anime(id):
     id_as_uuid = uuid.UUID(id)
     anime_object_from_dictionary = Parent_Object.anime_dict[id_as_uuid]
 
-    if anime_object_from_dictionary.showimage is not None:
+    if anime_object_from_dictionary.showimage is not None\
+            and anime_object_from_dictionary.showimage != '':
         data64 = u'data:%s;base64, %s' % (
             'image/jpg', base64.encodebytes(anime_object_from_dictionary.showimage).decode('utf8'))
 
@@ -148,30 +152,43 @@ def get_anime(id):
     edit_page = open('Anime_Edit.html').read()
 
     def render_anime(node, anime_object):
-        node.Anime_Link_Attribute.atts['value'] = anime_object.showlink
-        node.Anime_Title_Attribute.atts['value'] = anime_object.showname
-        node.DisplayImgAtr.atts['src'] = data64
-
+        node.ActionPathAtr.atts['action'] = '/anime/' + str(id_as_uuid) + '/update'
+        node.ActionPathAtr.Anime_Link_Attribute.atts['value'] = anime_object.showlink
+        node.ActionPathAtr.Anime_Title_Attribute.atts['value'] = anime_object.showname
+        node.ActionPathAtr.DisplayImgAtr.atts['src'] = data64
 
     cartoon_template = Template(edit_page)
     return cartoon_template.render(render_anime, anime_object_from_dictionary)
 
 
-
 @app.route('/cartoon/<id>/delete')
-def delete_cartoon():
-    pass
+def delete_cartoon(id):
+    global Parent_Object
+    load_database()
+    id_as_uuid = uuid.UUID(id)
+    del Parent_Object.cartoon_dict[id_as_uuid]
+    save_database()
+    return redirect('/cartoon_list')
 
 
 @app.route('/anime/<id>/delete')
-def delete_anime():
-    pass
+def delete_anime(id):
+    global Parent_Object
+    load_database()
+    id_as_uuid = uuid.UUID(id)
+    del Parent_Object.anime_dict[id_as_uuid]
+    save_database()
+    return redirect('/anime_list')
 
 
-@app.route('/cartoon/<id>/update')
-def update_cartoon():
+@app.route('/cartoon/<id>/update', methods=['POST',])
+def update_cartoon(id):
+    global Parent_Object
+    load_database()
 
-    cartoon_to_update = Parent_Object.cartoon_dict[id]
+    id_as_uuid = uuid.UUID(id)
+
+    cartoon_to_update = Parent_Object.cartoon_dict[id_as_uuid]
 
     try:
         file = request.files['Image_Input']
@@ -192,14 +209,19 @@ def update_cartoon():
         cartoon_to_update.showname = request.form['Cartoon_Title_Input']
         cartoon_to_update.showlink = request.form['Cartoon_Link_Input']
 
-    Parent_Object.cartoon_dict[id] = cartoon_to_update
+    Parent_Object.cartoon_dict[id_as_uuid] = cartoon_to_update
     save_database()
     return redirect('/')
 
 
-@app.route('/anime/<id>/update')
-def update_anime():
-    anime_to_update = Parent_Object.anime_dict[id]
+@app.route('/anime/<id>/update', methods=['POST',])
+def update_anime(id):
+    global Parent_Object
+    load_database()
+
+    id_as_uuid = uuid.UUID(id)
+
+    anime_to_update = Parent_Object.anime_dict[id_as_uuid]
 
     try:
         file = request.files['Image_Input']
@@ -220,9 +242,10 @@ def update_anime():
         anime_to_update.showname=request.form['Anime_Title_Input']
         anime_to_update.showlink=request.form['Anime_Link_Input']
 
-    Parent_Object.anime_dict[id] = anime_to_update
+    Parent_Object.anime_dict[id_as_uuid] = anime_to_update
     save_database()
     return redirect('/')
+
 
 @app.route('/')
 def home():
@@ -233,7 +256,7 @@ def home():
         return list_page
 
 
-@app.route('/cartoon/new', methods=['POST',])
+@app.route('/cartoon/new/', methods=['POST',])
 def add_cartooon():
     try:
         file = request.files['Image_Input']
@@ -262,14 +285,33 @@ def add_cartooon():
     return redirect('/')
 
 
-@app.route('/cartoon/new', methods=['GET',])
+@app.route('/cartoon/new/', methods=['GET',])
 def get_add_cartooon_form():
+
+    def render_cartoon_page(node):
+        node.ActionPathAtr.atts['action'] = '/cartoon/new/'
+
     this_folder = os.path.dirname(os.path.abspath(__file__))
     add_cartoon_page = os.path.join(this_folder, 'Cartoon_Edit.html')
-    return open(add_cartoon_page).read()
+    cartoon_template = Template(open(add_cartoon_page).read())
+    return cartoon_template.render(render_cartoon_page)
+    #return open(add_cartoon_page).read()
 
 
-@app.route('/anime/new', methods=['POST',])
+@app.route('/anime/new/', methods=['GET',])
+def get_add_anime_form():
+
+    def render_anime_page(node):
+        node.ActionPathAtr.atts['action'] = '/anime/new/'
+
+    this_folder = os.path.dirname(os.path.abspath(__file__))
+    add_anime_page = os.path.join(this_folder, 'Anime_Edit.html')
+    anime_template = Template(open(add_anime_page).read())
+    return anime_template.render(render_anime_page)
+    #return open(add_anime_page).read()
+
+
+@app.route('/anime/new/', methods=['POST',])
 def add_anime():
     try:
         file = request.files['Image_Input']
@@ -296,13 +338,6 @@ def add_anime():
     Parent_Object.anime_dict[New_Anime.id] = New_Anime
     save_database()
     return redirect('/')
-
-
-@app.route('/anime/new', methods=['GET',])
-def get_add_anime_form():
-    this_folder = os.path.dirname(os.path.abspath(__file__))
-    add_anime_page = os.path.join(this_folder, 'Anime_Edit.html')
-    return open(add_anime_page).read()
 
 
 if __name__ == '__main__':
