@@ -73,11 +73,22 @@ def cartoon_list():
     def render_Cartoon_template(node):
         node.Cartoon_Attribute.repeat(render_cartoonAtr, Parent_Object.cartoon_dict)
 
+
+
     def render_cartoonAtr(node, cartoonsection):
+
+        if Parent_Object.cartoon_dict[cartoonsection].showimage is not None \
+                and Parent_Object.cartoon_dict[cartoonsection].showimage != '':
+            data64 = u'data:%s;base64, %s' % (
+                'image/jpg', base64.encodebytes(Parent_Object.cartoon_dict[cartoonsection].showimage).decode('utf8'))
+        else:
+            data64 = None
+
         node.Cartoon_Title_Attribute.text = Parent_Object.cartoon_dict[cartoonsection].showname
         node.Cartoon_Title_Attribute.atts['href'] = Parent_Object.cartoon_dict[cartoonsection].showlink
         node.Cartoon_Edit_Attribute.atts['href'] = '/cartoon/' + str(Parent_Object.cartoon_dict[cartoonsection].id)
         node.Cartoon_Delete_Attribute.atts['href'] = '/cartoon/' + str(Parent_Object.cartoon_dict[cartoonsection].id) + '/delete'
+        node.Cartoon_Logo_Attribute.atts['src'] = data64
 
     cartoon_list_template = Template(cartoon_list_page)
     return cartoon_list_template.render(render_Cartoon_template)
@@ -88,14 +99,24 @@ def anime_list():
     load_database()
     anime_list_page = open(app.root_path + "/AnimeList.html").read()
 
+
     def render_anime_template(node):
         node.Anime_Attribute.repeat(render_animeAtr, Parent_Object.anime_dict)
 
     def render_animeAtr(node, animesection):
+        if Parent_Object.anime_dict[animesection].showimage is not None \
+                and Parent_Object.anime_dict[animesection].showimage != '':
+            data64 = u'data:%s;base64, %s' % (
+                'image/jpg', base64.encodebytes(Parent_Object.anime_dict[animesection].showimage).decode('utf8'))
+        else:
+            data64 = None
+
         node.Anime_Title_Attribute.text = Parent_Object.anime_dict[animesection].showname
         node.Anime_Title_Attribute.atts['href'] = Parent_Object.anime_dict[animesection].showlink
         node.Anime_Edit_Attribute.atts['href'] = '/anime/' + str(Parent_Object.anime_dict[animesection].id)
         node.Anime_Delete_Attribute.atts['href'] = '/anime/' +str(Parent_Object.anime_dict[animesection].id) + '/delete'
+        node.Anime_Logo_Attribute.atts['src'] = data64
+
 
     anime_list_template = Template(anime_list_page)
     return anime_list_template.render(render_anime_template)
@@ -197,13 +218,16 @@ def update_cartoon(id):
 
     if file is not None and file.filename != '':
         uploaded_image = Image.open(file)
-        uploaded_image.thumbnail((500, 500))
+        uploaded_image.thumbnail((300, 300))
         uploaded_image.save(file.filename)
         uploaded_image.close()
         uploaded_image = open(file.filename, 'rb')
+        read_image=uploaded_image.read()
+        os.remove(file.filename)
+
 
         cartoon_to_update.showname = request.form['Cartoon_Title_Input']
-        cartoon_to_update.showimage = uploaded_image.read()
+        cartoon_to_update.showimage = read_image
         cartoon_to_update.showlink = request.form['Cartoon_Link_Input']
     else:
         cartoon_to_update.showname = request.form['Cartoon_Title_Input']
@@ -230,13 +254,15 @@ def update_anime(id):
 
     if file is not None and file.filename != '':
         uploaded_image = Image.open(file)
-        uploaded_image.thumbnail((500, 500))
+        uploaded_image.thumbnail((300, 300))
         uploaded_image.save(file.filename)
         uploaded_image.close()
         uploaded_image = open(file.filename,'rb')
+        read_image = uploaded_image.read()
+        os.remove(file.filename)
 
         anime_to_update.showname = request.form['Anime_Title_Input']
-        anime_to_update.showimage = uploaded_image.read()
+        anime_to_update.showimage = read_image
         anime_to_update.showlink=request.form['Anime_Link_Input']
     else:
         anime_to_update.showname=request.form['Anime_Title_Input']
@@ -265,15 +291,17 @@ def add_cartooon():
 
     if file is not None and file.filename != '':
         uploaded_image = Image.open(file)
-        uploaded_image.thumbnail((500, 500))
+        uploaded_image.thumbnail((300, 300))
         uploaded_image.save(file.filename)
         uploaded_image.close()
         uploaded_image=open(file.filename,'rb')
+        read_image=uploaded_image.read()
+        os.remove(file.filename)
 
     # instantiate a new show object and populate it from request.form
         New_Cartoon = cartoon_show_object(
             showname=request.form['Cartoon_Title_Input'],
-            showimage=uploaded_image.read(),
+            showimage=read_image,
             showlink=request.form['Cartoon_Link_Input'])
     else:
         New_Cartoon = cartoon_show_object(
@@ -320,15 +348,19 @@ def add_anime():
 
     if file is not None and file.filename != '':
         uploaded_image = Image.open(file)
-        uploaded_image.thumbnail((500, 500))
+        uploaded_image.thumbnail((300, 300))
         uploaded_image.save(file.filename)
         uploaded_image.close()
         uploaded_image=open(file.filename,'rb')
+        read_image = uploaded_image.read()
+        uploaded_image.close()
+        os.remove(file.filename)
+
 
         # instantiate a new show object and populate it from request.form
         New_Anime = anime_show_object(
             showname=request.form['Anime_Title_Input'],
-            showimage=uploaded_image.read(),
+            showimage=read_image,
             showlink=request.form['Anime_Link_Input'])
     else:
         New_Anime=anime_show_object(
