@@ -47,6 +47,20 @@ def load_database():
         pass  # do nothing. no database to load
 
 
+def shrink_image(file):
+    if file is not None and file.filename != '':
+        image_to_shrink = Image.open(file)
+        image_to_shrink.thumbnail((300, 300))
+        image_to_shrink.save(file.filename)
+        image_to_shrink.close()
+        image_to_shrink = open(file.filename, 'rb')
+        read_image = image_to_shrink.read()
+        os.remove(file.filename)
+        return read_image
+    else:
+        return None
+
+
 @app.route('/initdb')
 def setup_database():
     conn = psycopg2.connect(os.getenv('cartoon_database_url'))
@@ -216,22 +230,9 @@ def update_cartoon(id):
     except:
         file = None
 
-    if file is not None and file.filename != '':
-        uploaded_image = Image.open(file)
-        uploaded_image.thumbnail((300, 300))
-        uploaded_image.save(file.filename)
-        uploaded_image.close()
-        uploaded_image = open(file.filename, 'rb')
-        read_image=uploaded_image.read()
-        os.remove(file.filename)
-
-
-        cartoon_to_update.showname = request.form['Cartoon_Title_Input']
-        cartoon_to_update.showimage = read_image
-        cartoon_to_update.showlink = request.form['Cartoon_Link_Input']
-    else:
-        cartoon_to_update.showname = request.form['Cartoon_Title_Input']
-        cartoon_to_update.showlink = request.form['Cartoon_Link_Input']
+    cartoon_to_update.showname = request.form['Cartoon_Title_Input']
+    cartoon_to_update.showimage = shrink_image(file)
+    cartoon_to_update.showlink = request.form['Cartoon_Link_Input']
 
     Parent_Object.cartoon_dict[id_as_uuid] = cartoon_to_update
     save_database()
@@ -252,21 +253,9 @@ def update_anime(id):
     except:
         file = None
 
-    if file is not None and file.filename != '':
-        uploaded_image = Image.open(file)
-        uploaded_image.thumbnail((300, 300))
-        uploaded_image.save(file.filename)
-        uploaded_image.close()
-        uploaded_image = open(file.filename,'rb')
-        read_image = uploaded_image.read()
-        os.remove(file.filename)
-
-        anime_to_update.showname = request.form['Anime_Title_Input']
-        anime_to_update.showimage = read_image
-        anime_to_update.showlink=request.form['Anime_Link_Input']
-    else:
-        anime_to_update.showname=request.form['Anime_Title_Input']
-        anime_to_update.showlink=request.form['Anime_Link_Input']
+    anime_to_update.showname = request.form['Anime_Title_Input']
+    anime_to_update.showimage = shrink_image(file)
+    anime_to_update.showlink=request.form['Anime_Link_Input']
 
     Parent_Object.anime_dict[id_as_uuid] = anime_to_update
     save_database()
@@ -289,24 +278,11 @@ def add_cartooon():
     except:
         file = None
 
-    if file is not None and file.filename != '':
-        uploaded_image = Image.open(file)
-        uploaded_image.thumbnail((300, 300))
-        uploaded_image.save(file.filename)
-        uploaded_image.close()
-        uploaded_image=open(file.filename,'rb')
-        read_image=uploaded_image.read()
-        os.remove(file.filename)
-
     # instantiate a new show object and populate it from request.form
-        New_Cartoon = cartoon_show_object(
-            showname=request.form['Cartoon_Title_Input'],
-            showimage=read_image,
-            showlink=request.form['Cartoon_Link_Input'])
-    else:
-        New_Cartoon = cartoon_show_object(
-            showname=request.form['Cartoon_Title_Input'],
-            showlink=request.form['Cartoon_Link_Input'])
+    New_Cartoon = cartoon_show_object(
+        showname=request.form['Cartoon_Title_Input'],
+        showimage=shrink_image(file),
+        showlink=request.form['Cartoon_Link_Input'])
 
     Parent_Object.cartoon_dict[New_Cartoon.id] = New_Cartoon
     save_database()
@@ -346,26 +322,11 @@ def add_anime():
     except:
         file = None
 
-    if file is not None and file.filename != '':
-        uploaded_image = Image.open(file)
-        uploaded_image.thumbnail((300, 300))
-        uploaded_image.save(file.filename)
-        uploaded_image.close()
-        uploaded_image=open(file.filename,'rb')
-        read_image = uploaded_image.read()
-        uploaded_image.close()
-        os.remove(file.filename)
-
-
         # instantiate a new show object and populate it from request.form
-        New_Anime = anime_show_object(
-            showname=request.form['Anime_Title_Input'],
-            showimage=read_image,
-            showlink=request.form['Anime_Link_Input'])
-    else:
-        New_Anime=anime_show_object(
-            showname=request.form['Anime_Title_Input'],
-            showlink=request.form['Anime_Link_Input'])
+    New_Anime = anime_show_object(
+        showname=request.form['Anime_Title_Input'],
+        showimage=shrink_image(file),
+        showlink=request.form['Anime_Link_Input'])
 
     Parent_Object.anime_dict[New_Anime.id] = New_Anime
     save_database()
