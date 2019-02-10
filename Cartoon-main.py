@@ -231,7 +231,10 @@ def update_cartoon(id):
         file = None
 
     cartoon_to_update.showname = request.form['Cartoon_Title_Input']
-    cartoon_to_update.showimage = shrink_image(file)
+
+    if file is not None:
+        cartoon_to_update.showimage = shrink_image(file)
+
     cartoon_to_update.showlink = request.form['Cartoon_Link_Input']
 
     Parent_Object.cartoon_dict[id_as_uuid] = cartoon_to_update
@@ -254,7 +257,9 @@ def update_anime(id):
         file = None
 
     anime_to_update.showname = request.form['Anime_Title_Input']
-    anime_to_update.showimage = shrink_image(file)
+
+    if file is not None:
+        anime_to_update.showimage = shrink_image(file)
     anime_to_update.showlink=request.form['Anime_Link_Input']
 
     Parent_Object.anime_dict[id_as_uuid] = anime_to_update
