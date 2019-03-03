@@ -345,7 +345,11 @@ def search():
     for animeitem in Parent_Object.anime_dict:
         if Parent_Object.anime_dict[animeitem].showname == request.form['searchbox']:
             search_result_list.append(Parent_Object.anime_dict[animeitem])
-    pass
+
+    this_folder = os.path.dirname(os.path.abspath(__file__))
+    search_results_page = os.path.join(this_folder, 'Search_Results.html')
+    #anime_template = Template(open(add_anime_page).read())
+    return open(search_results_page).read()
 
 
 if __name__ == '__main__':
