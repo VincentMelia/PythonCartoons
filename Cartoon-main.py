@@ -338,6 +338,11 @@ def add_anime():
     return redirect('/')
 
 
+@app.route('/search/', methods=['POST',])
+def search():
+    pass
+
+
 if __name__ == '__main__':
     load_database()
     app.run(debug=True)
