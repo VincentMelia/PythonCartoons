@@ -36,6 +36,6 @@ def AnimeWildCardSearch(animesearchtext):
     return search_result_list
 
 
-AnimeWildCardSearch('anime1name*')
+print(AnimeWildCardSearch('anime3name'))
 
 re.search('(.*)anime(.*)', AnimeList[0].showname).group(1)
