@@ -363,6 +363,8 @@ def search():
 
         node.Anime_Title_Attribute.text = search_result_list2[animesection].showname
 
+        node.Anime_Title_Attribute.atts['href'] = search_result_list2[animesection].showlink
+
     #cartoon_template = Template(edit_page)
     #return cartoon_template.render(render_anime, anime_object_from_dictionary)
 
