@@ -341,16 +341,36 @@ def add_anime():
 @app.route('/search/', methods=['POST', ])
 def search():
     load_database()
-    search_result_list = []
+    search_result_list2 = {}
+
     for animeitem in Parent_Object.anime_dict:
         if Parent_Object.anime_dict[animeitem].showname == request.form['searchbox']:
-            search_result_list.append(Parent_Object.anime_dict[animeitem])
+            search_result_list2[Parent_Object.anime_dict[animeitem].id]=Parent_Object.anime_dict[animeitem]
 
     this_folder = os.path.dirname(os.path.abspath(__file__))
     search_results_page = os.path.join(this_folder, 'Search_Results.html')
-    #anime_template = Template(open(add_anime_page).read())
-    return open(search_results_page).read()
 
+    def render_anime_template(node):
+        node.Anime_Attribute.repeat(render_animeAtr, search_result_list2)
+
+    def render_animeAtr(node, animesection):
+        if search_result_list2[animesection].showimage is not None \
+                and Parent_Object.anime_dict[animesection].showimage != '':
+            data64 = u'data:%s;base64, %s' % (
+                'image/jpg', base64.encodebytes(Parent_Object.anime_dict[animesection].showimage).decode('utf8'))
+        else:
+            data64 = None
+
+        node.Anime_Title_Attribute.text = search_result_list2[animesection].showname
+
+        node.Anime_Title_Attribute.atts['href'] = search_result_list2[animesection].showlink
+
+    #cartoon_template = Template(edit_page)
+    #return cartoon_template.render(render_anime, anime_object_from_dictionary)
+
+    #return open(search_results_page).read()
+    search_template = Template(open(search_results_page).read())
+    return search_template.render(render_anime_template)
 
 if __name__ == '__main__':
     load_database()
