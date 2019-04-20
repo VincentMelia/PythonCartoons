@@ -347,6 +347,11 @@ def search():
         if Parent_Object.anime_dict[animeitem].showname == request.form['searchbox']:
             search_result_list2[Parent_Object.anime_dict[animeitem].id]=Parent_Object.anime_dict[animeitem]
 
+    for cartoonitem in Parent_Object.cartoon_dict:
+        if Parent_Object.cartoon_dict[cartoonitem].showname == request.form['searchbox']:
+            search_result_list2[Parent_Object.cartoon_dict[cartoonitem].id]=Parent_Object.cartoon_dict[cartoonitem]
+
+
     this_folder = os.path.dirname(os.path.abspath(__file__))
     search_results_page = os.path.join(this_folder, 'Search_Results.html')
 
