@@ -35,8 +35,11 @@
     <a href="/cartoon_list" class="w3-bar-item w3-button">Cartoon List</a>
     <a href="/anime/new" class="w3-bar-item w3-button">New Anime</a>
     <a href="/cartoon/new" class="w3-bar-item w3-button">New Cartoon</a>
-    <input type="text" class="w3-bar-item w3-input" placeholder="Search">
-    <a href="#" class="w3-bar-item w3-button w3-black">Go</a>
+
+    <form action="/search/" method="POST" enctype="multipart/form-data">
+        <input name = "searchbox" type="text" class="w3-bar-item w3-input" placeholder="Search">
+        <button  class="w3-bar-item w3-button w3-black" type="submit">Go</button>
+    </form>
 </div>
 
 <table>
@@ -44,6 +47,8 @@
     <tr node="rep:Anime_Attribute">
         <td> <img node="con:Anime_Logo_Attribute" src=""/></td>
         <td> <a node="con:Anime_Title_Attribute" href=""> </a></td>
+        <td><a node="con:Anime_Edit_Attribute" href=""> Edit </a></td>
+
     </tr>
 
 </table>

@@ -45,6 +45,8 @@ def load_database():
     except TypeError as err:
         print("Unexpected error:", err)
         pass  # do nothing. no database to load
+    except:
+        pass  #this might happen if there's no schema deployed
 
 
 def shrink_image(file):
@@ -345,7 +347,11 @@ def search():
 
     for animeitem in Parent_Object.anime_dict:
         if Parent_Object.anime_dict[animeitem].showname == request.form['searchbox']:
-            search_result_list2[Parent_Object.anime_dict[animeitem].id]=Parent_Object.anime_dict[animeitem]
+            search_result_list2[Parent_Object.anime_dict[animeitem].id] = Parent_Object.anime_dict[animeitem]
+
+    for cartoonitem in Parent_Object.cartoon_dict:
+        if Parent_Object.cartoon_dict[cartoonitem].showname == request.form['searchbox']:
+            search_result_list2[Parent_Object.cartoon_dict[cartoonitem].id] = Parent_Object.cartoon_dict[cartoonitem]
 
     this_folder = os.path.dirname(os.path.abspath(__file__))
     search_results_page = os.path.join(this_folder, 'Search_Results.html')
@@ -355,22 +361,24 @@ def search():
 
     def render_animeAtr(node, animesection):
         if search_result_list2[animesection].showimage is not None \
-                and Parent_Object.anime_dict[animesection].showimage != '':
+                and search_result_list2[animesection].showimage != '':
             data64 = u'data:%s;base64, %s' % (
-                'image/jpg', base64.encodebytes(Parent_Object.anime_dict[animesection].showimage).decode('utf8'))
+                'image/jpg', base64.encodebytes(search_result_list2[animesection].showimage).decode('utf8'))
         else:
             data64 = None
 
+        node.Anime_Logo_Attribute.atts['src'] = data64
         node.Anime_Title_Attribute.text = search_result_list2[animesection].showname
-
         node.Anime_Title_Attribute.atts['href'] = search_result_list2[animesection].showlink
+        if type(search_result_list2[animesection])==show_object.anime_dict:
+            node.Anime_Edit_Attribute.atts['href'] = '/anime/' + str(search_result_list2[animesection].id)
+        elif type(search_result_list2[animesection])==show_object.cartoon_dict:
+            node.Anime_Edit_Attribute.atts['href'] = '/cartoon/' + str(search_result_list2[animesection].id)
 
-    #cartoon_template = Template(edit_page)
-    #return cartoon_template.render(render_anime, anime_object_from_dictionary)
 
-    #return open(search_results_page).read()
     search_template = Template(open(search_results_page).read())
     return search_template.render(render_anime_template)
+
 
 if __name__ == '__main__':
     load_database()
