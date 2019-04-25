@@ -45,6 +45,8 @@ def load_database():
     except TypeError as err:
         print("Unexpected error:", err)
         pass  # do nothing. no database to load
+    except:
+        pass  #this might happen if there's no schema deployed
 
 
 def shrink_image(file):
