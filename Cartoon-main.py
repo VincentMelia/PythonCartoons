@@ -370,9 +370,9 @@ def search():
         node.Anime_Logo_Attribute.atts['src'] = data64
         node.Anime_Title_Attribute.text = search_result_list2[animesection].showname
         node.Anime_Title_Attribute.atts['href'] = search_result_list2[animesection].showlink
-        if type(search_result_list2[animesection])==show_object.anime_dict:
+        if type(search_result_list2[animesection]) == anime_show_object:
             node.Anime_Edit_Attribute.atts['href'] = '/anime/' + str(search_result_list2[animesection].id)
-        elif type(search_result_list2[animesection])==show_object.cartoon_dict:
+        elif type(search_result_list2[animesection]) == cartoon_show_object:
             node.Anime_Edit_Attribute.atts['href'] = '/cartoon/' + str(search_result_list2[animesection].id)
 
 
