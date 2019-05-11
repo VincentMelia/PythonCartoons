@@ -345,13 +345,13 @@ def search():
     load_database()
     search_result_list2 = {}
 
-    for animeitem in Parent_Object.anime_dict:
-        if Parent_Object.anime_dict[animeitem].showname == request.form['searchbox']:
-            search_result_list2[Parent_Object.anime_dict[animeitem].id] = Parent_Object.anime_dict[animeitem]
+    for animekey, animeitem in Parent_Object.anime_dict.items():
+        if animeitem.showname == request.form['searchbox']:
+            search_result_list2[animekey] = animeitem
 
-    for cartoonitem in Parent_Object.cartoon_dict:
-        if Parent_Object.cartoon_dict[cartoonitem].showname == request.form['searchbox']:
-            search_result_list2[Parent_Object.cartoon_dict[cartoonitem].id] = Parent_Object.cartoon_dict[cartoonitem]
+    for cartoonkey, cartoonitem in Parent_Object.cartoon_dict.items():
+        if cartoonitem.showname == request.form['searchbox']:
+            search_result_list2[cartoonkey] = cartoonitem
 
     this_folder = os.path.dirname(os.path.abspath(__file__))
     search_results_page = os.path.join(this_folder, 'Search_Results.html')
