@@ -345,13 +345,13 @@ def search():
     load_database()
     search_result_list2 = {}
 
-    for animeitem in Parent_Object.anime_dict:
-        if Parent_Object.anime_dict[animeitem].showname == request.form['searchbox']:
-            search_result_list2[Parent_Object.anime_dict[animeitem].id] = Parent_Object.anime_dict[animeitem]
+    for animekey, animeitem in Parent_Object.anime_dict.items():
+        if animeitem.showname == request.form['searchbox']:
+            search_result_list2[animekey] = animeitem
 
-    for cartoonitem in Parent_Object.cartoon_dict:
-        if Parent_Object.cartoon_dict[cartoonitem].showname == request.form['searchbox']:
-            search_result_list2[Parent_Object.cartoon_dict[cartoonitem].id] = Parent_Object.cartoon_dict[cartoonitem]
+    for cartoonkey, cartoonitem in Parent_Object.cartoon_dict.items():
+        if cartoonitem.showname == request.form['searchbox']:
+            search_result_list2[cartoonkey] = cartoonitem
 
     this_folder = os.path.dirname(os.path.abspath(__file__))
     search_results_page = os.path.join(this_folder, 'Search_Results.html')
@@ -370,9 +370,9 @@ def search():
         node.Anime_Logo_Attribute.atts['src'] = data64
         node.Anime_Title_Attribute.text = search_result_list2[animesection].showname
         node.Anime_Title_Attribute.atts['href'] = search_result_list2[animesection].showlink
-        if type(search_result_list2[animesection])==show_object.anime_dict:
+        if type(search_result_list2[animesection]) == anime_show_object:
             node.Anime_Edit_Attribute.atts['href'] = '/anime/' + str(search_result_list2[animesection].id)
-        elif type(search_result_list2[animesection])==show_object.cartoon_dict:
+        elif type(search_result_list2[animesection]) == cartoon_show_object:
             node.Anime_Edit_Attribute.atts['href'] = '/cartoon/' + str(search_result_list2[animesection].id)
 
 
